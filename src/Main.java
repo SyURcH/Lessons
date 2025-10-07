@@ -1,44 +1,77 @@
 public class Main {
     public static void main(String[] args) {
-        System.out.println("=== 1-2 ===");
+        System.out.println("=== ЗАДАНИЕ 1: ЖИВОТНЫЕ ===");
+        testAnimals();
 
-        Product[] productsArray = new Product[5];
+        System.out.println("\n=== ЗАДАНИЕ 2: ГЕОМЕТРИЧЕСКИЕ ФИГУРЫ ===");
+        testFigures();
 
-        productsArray[0] = new Product("Samsung S25 Ultra", "01.02.2025",
-                "Samsung Corp.", "Korea", 5599.0, true);
+        System.out.println("\n=== СТАТИСТИКА ===");
+        System.out.println("Всего животных: " + Animal.getAnimalCount());
+        System.out.println("Всего котов: " + Cat.getCatCount());
+        System.out.println("Всего собак: " + Dog.getDogCount());
+    }
 
-        productsArray[1] = new Product("iPhone 16", "15.01.2025",
-                "Apple Inc.", "USA", 4999.0, false);
+    public static void testAnimals() {
+        // Создаем животных
+        Cat cat1 = new Cat("Барсик");
+        Cat cat2 = new Cat("Мурзик");
+        Cat cat3 = new Cat("Васька");
+        Dog dog1 = new Dog("Бобик");
+        Dog dog2 = new Dog("Шарик");
 
-        productsArray[2] = new Product("Xiaomi Mi 14", "10.12.2024",
-                "Xiaomi Corporation", "China", 2999.0, true);
+        // Тестируем бег и плавание
+        cat1.run(150);
+        cat1.run(250);
+        cat1.swim(10);
 
-        productsArray[3] = new Product("MacBook Air M3", "20.11.2024",
-                "Apple Inc.", "USA", 4599.0, false);
+        dog1.run(400);
+        dog1.run(600);
+        dog1.swim(5);
+        dog1.swim(15);
 
-        productsArray[4] = new Product("Sony WH-1000XM5", "05.03.2024",
-                "Sony Corporation", "Japan", 899.0, true);
+        // Работа с миской
+        Bowl bowl = new Bowl(20);
+        System.out.println("\n--- Кормление котов ---");
 
-        System.out.println("Информация о всех товарах:");
-        System.out.println("==========================");
-        for (int i = 0; i < productsArray.length; i++) {
-            System.out.println("Товар " + (i + 1) + ":");
-            productsArray[i].printInfo();
+        Cat[] cats = {cat1, cat2, cat3};
+
+        // Первое кормление
+        for (Cat cat : cats) {
+            cat.eat(bowl, 10);
         }
 
-        System.out.println("=== 3 ===");
+        // Добавляем еду и кормим снова
+        System.out.println("\n--- Добавляем еду и кормим снова ---");
+        bowl.addFood(25);
 
-        Park centralPark = new Park("Центральный парк");
+        for (Cat cat : cats) {
+            if (!cat.isFull()) {
+                cat.eat(bowl, 10);
+            }
+        }
 
-        centralPark.addAttraction("Американские горки", "10:00-22:00", 500.0);
-        centralPark.addAttraction("Колесо обозрения", "09:00-23:00", 300.0);
-        centralPark.addAttraction("Карусель", "10:00-20:00", 200.0);
-        centralPark.addAttraction("Комната страха", "12:00-24:00", 400.0);
+        // Проверяем сытость
+        System.out.println("\n--- Состояние сытости котов ---");
+        for (Cat cat : cats) {
+            System.out.println(cat.getName() + " сыт: " + cat.isFull());
+        }
+    }
 
-        centralPark.printAllAttractions();
+    public static void testFigures() {
+        // Создаем фигуры
+        Circle circle = new Circle(5, "Красный", "Черный");
+        Rectangle rectangle = new Rectangle(4, 6, "Синий", "Белый");
+        Triangle triangle = new Triangle(3, 4, 5, "Зеленый", "Желтый");
 
-        System.out.println("=== Внутренний класс ===");
-        Park.Attraction newAttraction = centralPark.new Attraction("Водные горки", "11:00-19:00", 600.0);
-        newAttraction.printAttractionInfo();
+        // Выводим информацию о фигурах
+        System.out.println("Круг:");
+        circle.printInfo();
+
+        System.out.println("\nПрямоугольник:");
+        rectangle.printInfo();
+
+        System.out.println("\nТреугольник:");
+        triangle.printInfo();
     }
 }
