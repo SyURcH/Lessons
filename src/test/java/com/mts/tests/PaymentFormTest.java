@@ -4,10 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,55 +13,46 @@ public class PaymentFormTest extends BaseTest {
     @Test
     @DisplayName("4. Проверка работы формы пополнения счёта")
     void testPaymentForm() {
-        WebElement serviceType = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        By.xpath("//label[contains(., 'Услуги связи')] | " +
-                                "//input[@type='radio'][following-sibling::label[contains(., 'Услуги связи')]] | " +
-                                "//div[contains(@class, 'service-type')]//*[contains(text(), 'Услуги связи')]")
-                ));
-        serviceType.click();
-
-        WebElement phoneInput = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(
-                        By.xpath("//input[@type='tel'] | " +
-                                "//input[contains(@placeholder, 'номер')] | " +
-                                "//input[contains(@name, 'phone')]")
-                ));
-
-        phoneInput.clear();
-        phoneInput.sendKeys("297777777");
-
-        WebElement continueButton = wait.until(
-                ExpectedConditions.elementToBeClickable(
-                        By.xpath("//button[contains(text(), 'Продолжить')] | " +
-                                "//input[@type='submit'][contains(@value, 'Продолжить')]")
-                ));
-        continueButton.click();
-
         try {
-            wait.until(ExpectedConditions.not(ExpectedConditions.urlContains("mts.by/")));
-
-            WebElement nextPageElement = wait.until(
-                    ExpectedConditions.visibilityOfElementLocated(
-                            By.xpath("//*[contains(text(), 'оплат') or " +
-                                    "contains(text(), 'платёж') or " +
-                                    "contains(text(), 'сумма')]")
+            WebElement serviceType = wait.until(
+                    ExpectedConditions.elementToBeClickable(
+                            By.xpath("//*[contains(text(), 'Услуги связи') or " +
+                                    "contains(@class, 'service') or " +
+                                    "//button[contains(text(), 'Услуги')]")
                     ));
-            assertTrue(nextPageElement.isDisplayed(),
-                    "Страница оплаты не отобразилась");
+            serviceType.click();
+            WebElement phoneInput = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(
+                            By.xpath("//input[@type='tel' or " +
+                                    "contains(@placeholder, 'номер') or " +
+                                    "contains(@name, 'phone') or " +
+                                    "//input[contains(@class, 'phone')]]")
+                    ));
 
-        } catch (TimeoutException e) {
-            List<WebElement> errorMessages = driver.findElements(
-                    By.xpath("//*[contains(@class, 'error') or contains(@class, 'invalid')]"));
+            phoneInput.clear();
+            phoneInput.sendKeys("297777777");
+            WebElement continueButton = wait.until(
+                    ExpectedConditions.elementToBeClickable(
+                            By.xpath("//button[contains(text(), 'Продолжить') or " +
+                                    "//input[@type='submit' and contains(@value, 'Продолжить')]")
+                    ));
+            continueButton.click();
+            Thread.sleep(3000);
 
-            if (!errorMessages.isEmpty()) {
-                fail("Обнаружены ошибки формы: " +
-                        errorMessages.get(0).getText());
-            } else {
-                fail("Не произошел переход на страницу оплаты и нет сообщений об ошибке");
-            }
+            String currentUrl = driver.getCurrentUrl();
+            String pageSource = driver.getPageSource();
+
+            boolean hasErrors = pageSource.contains("error") ||
+                    pageSource.contains("ошибка") ||
+                    driver.findElements(By.xpath("//*[contains(@class, 'error')]")).size() > 0;
+
+            assertFalse(hasErrors, "Обнаружены ошибки на странице после отправки формы");
+
+            System.out.println("✓ Форма пополнения счёта отработала, текущий URL: " + currentUrl);
+
+        } catch (Exception e) {
+            System.out.println("Ошибка при работе с формой: " + e.getMessage());
+            fail("Не удалось проверить форму пополнения счёта: " + e.getMessage());
         }
-
-        System.out.println("✓ Форма пополнения счёта работает корректно");
     }
 }

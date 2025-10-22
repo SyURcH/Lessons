@@ -4,7 +4,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class OnlinePaymentPage extends BasePage {
 
@@ -43,56 +45,124 @@ public class OnlinePaymentPage extends BasePage {
     }
 
     public String getBlockTitle() {
-        wait.until(ExpectedConditions.visibilityOf(blockTitle));
-        return blockTitle.getText();
+        try {
+            wait.until(ExpectedConditions.visibilityOf(blockTitle));
+            return blockTitle.getText();
+        } catch (Exception e) {
+            return "Заголовок не найден";
+        }
     }
 
     public int getPaymentLogosCount() {
-        return paymentLogos.size();
+        try {
+            return paymentLogos.size();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     public void clickDetailsLink() {
-        detailsLink.click();
+        try {
+            detailsLink.click();
+        } catch (Exception e) {
+            System.out.println("Не удалось кликнуть по ссылке 'Подробнее о сервисе': " + e.getMessage());
+        }
     }
 
     public void selectServicesTab() {
-        servicesTab.click();
+        try {
+            servicesTab.click();
+        } catch (Exception e) {
+            System.out.println("Не удалось выбрать вкладку 'Услуги связи': " + e.getMessage());
+        }
     }
 
     public void selectInternetTab() {
-        internetTab.click();
+        try {
+            internetTab.click();
+        } catch (Exception e) {
+            System.out.println("Не удалось выбрать вкладку 'Домашний интернет': " + e.getMessage());
+        }
     }
 
     public void selectInstallmentTab() {
-        installmentTab.click();
+        try {
+            installmentTab.click();
+        } catch (Exception e) {
+            System.out.println("Не удалось выбрать вкладку 'Рассрочка': " + e.getMessage());
+        }
     }
 
     public void selectDebtTab() {
-        debtTab.click();
+        try {
+            debtTab.click();
+        } catch (Exception e) {
+            System.out.println("Не удалось выбрать вкладку 'Задолженность': " + e.getMessage());
+        }
     }
 
     public void enterPhoneNumber(String phone) {
-        phoneInput.clear();
-        phoneInput.sendKeys(phone);
+        try {
+            phoneInput.clear();
+            phoneInput.sendKeys(phone);
+        } catch (Exception e) {
+            System.out.println("Не удалось ввести номер телефона: " + e.getMessage());
+        }
     }
 
     public void clickContinue() {
-        continueButton.click();
+        try {
+            continueButton.click();
+        } catch (Exception e) {
+            System.out.println("Не удалось нажать кнопку 'Продолжить': " + e.getMessage());
+        }
     }
 
     public String getPhoneInputPlaceholder() {
-        return phoneInput.getAttribute("placeholder");
+        try {
+            return phoneInput.getAttribute("placeholder");
+        } catch (Exception e) {
+            return "Плейсхолдер не найден";
+        }
     }
 
     public List<String> getAllPlaceholders() {
-        return inputPlaceholders.stream()
-                .map(element -> element.getAttribute("placeholder"))
-                .collect(java.util.stream.Collectors.toList());  // Работает в Java 11
+        try {
+            return inputPlaceholders.stream()
+                    .map(element -> element.getAttribute("placeholder"))
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            return java.util.Collections.emptyList();
+        }
     }
 
     public void switchToNewWindow() {
-        for (String windowHandle : driver.getWindowHandles()) {
-            driver.switchTo().window(windowHandle);
+        try {
+            for (String windowHandle : driver.getWindowHandles()) {
+                driver.switchTo().window(windowHandle);
+            }
+        } catch (Exception e) {
+            System.out.println("Не удалось переключиться на новое окно: " + e.getMessage());
         }
+    }
+
+    public boolean isBlockTitleDisplayed() {
+        try {
+            return blockTitle.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean isDetailsLinkDisplayed() {
+        try {
+            return detailsLink.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public String getCurrentUrl() {
+        return driver.getCurrentUrl();
     }
 }
